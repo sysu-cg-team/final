@@ -1,0 +1,9 @@
+# ignores following folders
+bin/
+build/
+.vscode
+**.zip
+**.txt
+**.shader
+src/
+resources/
