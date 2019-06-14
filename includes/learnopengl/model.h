@@ -104,12 +104,18 @@ private:
             vector.z = mesh->mVertices[i].z;
             vertex.Position = vector;
             // normals
-            vector.x = mesh->mNormals[i].x;
-            vector.y = mesh->mNormals[i].y;
-            vector.z = mesh->mNormals[i].z;
+            if (mesh->HasNormals()) {
+            	vector.x = mesh->mNormals[i].x;
+            	vector.y = mesh->mNormals[i].y;
+            	vector.z = mesh->mNormals[i].z;
+            } else {
+            	vector.x = 0;
+            	vector.y = 0;
+            	vector.z = 0;
+            }
             vertex.Normal = vector;
             // texture coordinates
-            if(mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
+            if(mesh->mTextureCoords[0] && mesh->HasTextureCoords(0)) // does the mesh contain texture coordinates?
             {
                 glm::vec2 vec;
                 // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
@@ -121,14 +127,26 @@ private:
             else
                 vertex.TexCoords = glm::vec2(0.0f, 0.0f);
             // tangent
-            vector.x = mesh->mTangents[i].x;
-            vector.y = mesh->mTangents[i].y;
-            vector.z = mesh->mTangents[i].z;
+            if (mesh->HasTangentsAndBitangents()) {
+            	vector.x = mesh->mTangents[i].x;
+            	vector.y = mesh->mTangents[i].y;
+            	vector.z = mesh->mTangents[i].z;
+            } else {
+            	vector.x = 0;
+            	vector.y = 0;
+            	vector.z = 0;
+            }
             vertex.Tangent = vector;
             // bitangent
-            vector.x = mesh->mBitangents[i].x;
-            vector.y = mesh->mBitangents[i].y;
-            vector.z = mesh->mBitangents[i].z;
+            if (mesh->HasTangentsAndBitangents()) {
+            	vector.x = mesh->mBitangents[i].x;
+            	vector.y = mesh->mBitangents[i].y;
+            	vector.z = mesh->mBitangents[i].z;
+            } else {
+            	vector.x = 0;
+            	vector.y = 0;
+            	vector.z = 0;
+            }
             vertex.Bitangent = vector;
             vertices.push_back(vertex);
         }
