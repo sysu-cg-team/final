@@ -31,7 +31,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
 
-    float bias = 0.003;
+    float bias = 0.008;
     // check whether current frag pos is in shadow
     // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
     // PCF
