@@ -12,9 +12,7 @@ newmtl Rana_LR01
 	Kd 0.588235 0.588235 0.588235
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka Rana-LR01DiffuseMap.jpg
 	map_Kd Rana-LR01DiffuseMap.jpg
-	map_Ks Rana-LR01DiffuseMap.jpg
 	map_bump Rana-LR01_Standardmaterial_Normal.jpg
 	bump Rana-LR01_Standardmaterial_Normal.jpg
 
@@ -29,9 +27,7 @@ newmtl Rana_A1
 	Kd 0.588235 0.588235 0.588235
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka Rana01DiffuseMap.jpg
 	map_Kd Rana01DiffuseMap.jpg
-	map_Ks Rana01DiffuseMap.jpg
 	map_bump wire_143224087_normal_base.jpg
 	bump wire_143224087_normal_base.jpg
 
@@ -46,8 +42,4 @@ newmtl Grass01
 	Kd 0.588235 0.588235 0.588235
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka Grass01DiffuseMap.jpg
 	map_Kd Grass01DiffuseMap.jpg
-	map_Ks Grass01DiffuseMap.jpg
-	map_bump grass_normal.png
-	bump grass_normal.png

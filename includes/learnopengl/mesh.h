@@ -61,7 +61,8 @@ public:
         unsigned int diffuseNr  = 1;
         unsigned int specularNr = 1;
         unsigned int normalNr   = 1;
-        unsigned int heightNr   = 1;
+        unsigned int ambientNr   = 1;
+
         for(unsigned int i = 0; i < textures.size(); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
@@ -74,14 +75,42 @@ public:
 				number = std::to_string(specularNr++); // transfer unsigned int to stream
             else if(name == "texture_normal")
 				number = std::to_string(normalNr++); // transfer unsigned int to stream
-             else if(name == "texture_height")
-			    number = std::to_string(heightNr++); // transfer unsigned int to stream
+             else if(name == "texture_ambient")
+			    number = std::to_string(ambientNr++); // transfer unsigned int to stream
 
 													 // now set the sampler to the correct texture unit
             glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
             // and finally bind the texture
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
+
+		if (diffuseNr == 1) {
+			shader.setBool("hasDiffuseTexture", false);
+		}
+		else {
+			shader.setBool("hasDiffuseTexture", true);
+		}
+
+		if (specularNr == 1) {
+			shader.setBool("hasSpecularTexture", false);
+		}
+		else {
+			shader.setBool("hasSpecularTexture", true);
+		}
+
+		if (normalNr == 1) {
+			shader.setBool("hasNormalTexture", false);
+		}
+		else {
+			shader.setBool("hasNormalTexture", true);
+		}
+
+		if (ambientNr == 1) {
+			shader.setBool("hasAmbientTexture", false);
+		}
+		else {
+			shader.setBool("hasAmbientTexture", true);
+		}
         
         // draw mesh
         glBindVertexArray(VAO);

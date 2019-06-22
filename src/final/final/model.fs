@@ -1,32 +1,29 @@
 #version 330 core
 out vec4 FragColor;
 
-struct Light {
-    vec3 position;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-}; 
-
 in VS_OUT {
     vec3 FragPos;
     vec3 Normal;
     vec2 TexCoords;
     vec4 FragPosLightSpace;
+
+	vec3 TangentNormal;
+	vec3 TangentLightPos;
+	vec3 TangentViewPos;
+	vec3 TangentFragPos;
 } fs_in;
 
+uniform bool hasDiffuseTexture;
+uniform bool hasSpecularTexture;
+uniform bool hasAmbientTexture;
 
-uniform sampler2D texture_height1;
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
-uniform sampler2D texture_normal1;
-
+uniform sampler2D texture_ambient1;
 uniform sampler2D shadowMap;
+
 uniform vec3 lightPos;
 uniform vec3 viewPos;
-uniform Light light;
-uniform float shininess;
-
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
@@ -65,26 +62,46 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 }
 
 void main()
-{   
+{           
+	// 用漫反射贴图的颜色作为颜色
+	vec3 color;
+	if (hasDiffuseTexture) {
+		color = texture(texture_diffuse1, fs_in.TexCoords).rgb;
+	} else {
+		color = vec3(0.5f, 0.5f, 0.5f);
+	}
+    vec3 normal = normalize(fs_in.TangentNormal);
+    vec3 lightColor = vec3(0.75f);
 
-	vec3 color = texture(texture_height1, fs_in.TexCoords).rgb;
-	// ambient 
-	vec3 ambient = light.ambient * color;
+    // ambient
+	vec3 ambient;
+	if (hasAmbientTexture) {
+		ambient = color * texture(texture_ambient1, fs_in.TexCoords).rgb * lightColor;
+	} else {
+		ambient = color * lightColor;
+	}
+     
+    // diffuse
+    vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+    float diff = max(dot(lightDir, normal), 0.0);
+    vec3 diffuse = diff * lightColor;
 
-	// diffuse
-	vec3 normal = normalize(fs_in.Normal);
-	vec3 lightDir = normalize(lightPos - fs_in.FragPos);
-	float diff = max(dot(lightDir, normal), 0.0);
-	vec3 diffuse = light.diffuse * diff * texture(texture_diffuse1, fs_in.TexCoords).rgb;
+    // specular
+    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
+	vec3 spec;
+	if (hasSpecularTexture) {
+		spec = texture(texture_specular1, fs_in.TexCoords).rgb;
+	} else {
+		spec = vec3(0.8f);
+	}
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    spec = pow(max(dot(normal, halfwayDir), 0.0), 256.0) * spec;
+    vec3 specular = spec * lightColor;    
 
-	// specular
-	vec3 viewDir = normalize(viewPos - fs_in.FragPos);
-    vec3 reflectDir = reflect(-lightDir, normal);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-    vec3 specular = light.specular * spec * texture(texture_specular1, fs_in.TexCoords).rgb;
-
-	// shadow
-	float shadow = ShadowCalculation(fs_in.FragPosLightSpace);       
-	vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;    
+    // calculate shadow
+    float shadow = ShadowCalculation(fs_in.FragPosLightSpace);                      
+    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
+    
     FragColor = vec4(lighting, 1.0);
 }
