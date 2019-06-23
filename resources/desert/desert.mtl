@@ -1,7 +1,7 @@
-# Blender MTL File: 'desert.blend'
+# Blender MTL File: 'None'
 # Material Count: 1
 
-newmtl Material.001
+newmtl Material.002
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
@@ -12,5 +12,6 @@ d 1.000000
 illum 2
 map_Ka Stonefloor2Floor_AO.jpg
 map_Kd Stonefloor2Floor_basecolor.jpg
+map_Ks Stonefloor2Floor_roughness.jpg
 map_bump Stonefloor2Floor_normal.jpg
 bump Stonefloor2Floor_normal.jpg
