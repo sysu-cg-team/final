@@ -12,9 +12,11 @@
 class Skybox : public Object
 {
 public:
-	Skybox(glm::vec3 pos, glm::vec3 size, glm::vec3 color, std::vector<std::string> faces, std::string name) : Object(pos, size, color) {
+	Skybox(glm::vec3 pos, glm::vec3 size, glm::vec3 color, std::vector<std::string> faces, std::vector<std::string> faces2, std::string name, std::string name2) : Object(pos, size, color) {
     this->faces = faces;
     this->name = name;
+	this->faces2 = faces2;
+	this->name2 = name2;
     this->InitRenderData();
 	};
 	~Skybox() {};
@@ -24,19 +26,23 @@ public:
 	void Draw(Shader *shader) {
     glDepthFunc(GL_LEQUAL);
 		shader->use();
-		shader->setInt("skybox", 0);
+		shader->setInt("skybox1", 0);
+		shader->setInt("skybox2", 1);
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, this->Position);
 		model = glm::scale(model, this->Size);
 		shader->setMat4("model", model);
 
 		auto texture = ResourceManager::GetTexture(this->name);
-    glBindVertexArray(this->VAO);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture.ID);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-    glDepthFunc(GL_LESS);
+		auto night = ResourceManager::GetTexture(this->name2);
+		glBindVertexArray(this->VAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, texture.ID);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, night.ID);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LESS);
 	}
 
 	void InitRenderData() {
@@ -94,14 +100,20 @@ public:
 
     // load cubeTextures to Resources
     auto cubemapTexture = this->loadCubemap(this->faces);
+    auto cubemapTexture2 = this->loadCubemap(this->faces2);
 	Texture2D t;
 	t.ID = cubemapTexture;
     ResourceManager::Textures[this->name] = t;
+	Texture2D t2;
+	t2.ID = cubemapTexture2;
+    ResourceManager::Textures[this->name2] = t2;
   }
 
   private:
     std::vector<std::string> faces;
     std::string name;
+	std::vector<std::string> faces2;
+	std::string name2;
     unsigned int loadCubemap(std::vector<std::string> faces);
 };
 

@@ -1,6 +1,7 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoord;
+layout (location = 2) in vec3 aNormal;
 
 out vec3 Pos;
 
@@ -23,7 +24,7 @@ void main()
 	// shadow
 	vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
 	vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);
-	vs_out.Normal = transpose(inverse(mat3(model))) * vec3(0, 1, 0);
+	vs_out.Normal = transpose(inverse(mat3(model))) * aNormal;
     Pos = aPos;
     vs_out.TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }

@@ -14,6 +14,7 @@ class Plane : public Object
   {
     glm::vec3 Position;
     glm::vec2 TextCoords;
+	glm::vec3 Normal;
   };
 
 public:
@@ -58,6 +59,11 @@ public:
         t2.Position = v2;
         t3.Position = v3;
         t4.Position = v4;
+		auto n1 = glm::cross(v2 - v1, v3 - v1), n2 = glm::cross(v3-v1, v4-v1);
+		t1.Normal = glm::normalize(n1 + n2);
+		t2.Normal = glm::normalize(n1);
+		t3.Normal = glm::normalize(n1 + n2);
+		t4.Normal = glm::normalize(n2);
         vertices.push_back(t1);
         vertices.push_back(t2);
         vertices.push_back(t3);
@@ -74,6 +80,19 @@ public:
       vertices[i].TextCoords = tmp;
     }
 
+	glm::vec3 acc = glm::vec3(0);
+	for (int i = 0; i < 9; i++) {
+		acc += vertices[i].Normal;
+	}
+
+	for (int i = 4; i < vertices.size() - 4; i++)
+	{
+		
+		vertices[i].Normal = glm::normalize(acc);
+		acc -= vertices[i - 4].Normal;
+		acc += vertices[i + 4].Normal;
+	}
+
     stbi_image_free(image);
 
     unsigned int VBO;
@@ -86,6 +105,8 @@ public:
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
 	glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, TextCoords));
+	glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Normal));
   }
 };
 

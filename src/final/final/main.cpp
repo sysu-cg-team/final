@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 
   // load models
   // -----------
-  Model ourModel(FileSystem::getPath("resources/desert/desert.obj"));
+  //Model ourModel(FileSystem::getPath("resources/desert/desert.obj"));
 
   // load wood
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/wood.jpg").c_str(), false, "wood");
@@ -98,7 +98,17 @@ int main(int argc, char *argv[])
           FileSystem::getPath("resources/textures/sunny/sunny_dn.jpg"),
           FileSystem::getPath("resources/textures/sunny/sunny_ft.jpg"),
           FileSystem::getPath("resources/textures/sunny/sunny_bk.jpg")};
-  Skybox skybox(glm::vec3(1), glm::vec3(1), glm::vec3(1), faces, "skybox_0");
+  std::vector<std::string>
+	  faces2{
+		  FileSystem::getPath("resources/textures/night/night_lf.png"),
+		  FileSystem::getPath("resources/textures/night/night_rt.png"),
+		  FileSystem::getPath("resources/textures/night/night_up.png"),
+		  FileSystem::getPath("resources/textures/night/night_dn.png"),
+		  FileSystem::getPath("resources/textures/night/night_ft.png"),
+		  FileSystem::getPath("resources/textures/night/night_bk.png") };
+
+  Skybox skybox(glm::vec3(1), glm::vec3(1), glm::vec3(1), faces, faces2, "skybox_s", "skybox_n");
+
 
   // load plane
   auto planeShader = ResourceManager::LoadShader(FileSystem::getPath("src/final/final/plane.vs").c_str(), FileSystem::getPath("src/final/final/plane.fs").c_str(), nullptr, "plane");
@@ -110,13 +120,13 @@ int main(int argc, char *argv[])
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/grass.png").c_str(), true, "grass");
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/mountain.png").c_str(), true, "mountain");
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/mask.png").c_str(), false, "mask");
-  Plane plane(glm::vec3(-100, 0, -100), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
+  Plane plane(glm::vec3(-125, 0, -125), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
 
   // load grass
   auto grassShader = ResourceManager::LoadShader(FileSystem::getPath("src/final/final/grass.vs").c_str(), FileSystem::getPath("src/final/final/grass.fs").c_str(), FileSystem::getPath("src/final/final/grass.gs").c_str(), "grass");
-  Grass grass(glm::vec3(-100, 0, -100), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
-  Grass grass2(glm::vec3(-100.5, 0, -100.5), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
-  Grass grass3(glm::vec3(-100.8, 0, -100.8), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
+  Grass grass(glm::vec3(-125, 0, -125), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
+  Grass grass2(glm::vec3(-125.5, 0, -125.5), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
+  Grass grass3(glm::vec3(-125.8, 0, -125.8), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/grass.png").c_str(), true, "t_grass");
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/alpha.png").c_str(), true, "a_grass");
   grassShader.use();
@@ -148,7 +158,7 @@ int main(int argc, char *argv[])
   glReadBuffer(GL_NONE);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-  glm::vec3 lightPos(5, 100.0f, 5.0f);
+  glm::vec3 lightPos(5, -100.0f, -100.0f);
 
   while (!glfwWindowShouldClose(window))
   {
@@ -159,8 +169,8 @@ int main(int argc, char *argv[])
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    lightPos = glm::vec3(5, 0, 0) + glm::vec3(0, 150 * cos(glfwGetTime() / 10), 150 * sin(glfwGetTime() / 10));
+	auto time = cos(glfwGetTime() / 5);
+    lightPos = glm::vec3(5, 0, 0) + glm::vec3(0, 150 * cos(glfwGetTime() / 5), 150 * sin(glfwGetTime() / 5));
 
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
@@ -182,7 +192,7 @@ int main(int argc, char *argv[])
 
     wood.Draw(&depthShader);
     plane.Draw(&depthShader);
-    ourModel.Draw(depthShader);
+   // ourModel.Draw(depthShader);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -206,8 +216,8 @@ int main(int argc, char *argv[])
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, depthMap);
     wood.Draw(&shadowShader);
-    //plane.Draw(&shadowShader);
 
+	// draw plane
     auto planeShader = ResourceManager::GetShader("plane");
     planeShader.use();
     glActiveTexture(GL_TEXTURE0); // 在绑定纹理之前先激活纹理单元
@@ -253,13 +263,14 @@ int main(int argc, char *argv[])
 
     // render the loaded model
     ourShader.setMat4("model", model);
-    ourModel.Draw(ourShader);
+   // ourModel.Draw(ourShader);
 
     auto skyboxShader = ResourceManager::GetShader("skybox");
     skyboxShader.use();
     view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
     skyboxShader.setMat4("view", view);
     skyboxShader.setMat4("projection", projection);
+	skyboxShader.setFloat("time", time);
     skybox.Draw(&skyboxShader);
 
     glfwMakeContextCurrent(window);
@@ -299,13 +310,13 @@ void processInput(GLFWwindow *window)
     glfwSetWindowShouldClose(window, true);
 
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    camera.ProcessKeyboard(FORWARD, deltaTime);
+    camera.ProcessKeyboard(FORWARD, deltaTime * 10);
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    camera.ProcessKeyboard(BACKWARD, deltaTime);
+    camera.ProcessKeyboard(BACKWARD, deltaTime * 10);
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    camera.ProcessKeyboard(LEFT, deltaTime);
+    camera.ProcessKeyboard(LEFT, deltaTime * 10);
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    camera.ProcessKeyboard(RIGHT, deltaTime);
+    camera.ProcessKeyboard(RIGHT, deltaTime * 10);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
