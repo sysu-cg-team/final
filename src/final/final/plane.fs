@@ -99,5 +99,7 @@ void main()
 	}            
 	 shadow = min(shadow, 0.75);
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;    
-	FragColor = vec4(lighting, 1.0);
+	//FragColor = vec4(lighting, 1.0);
+	float gamma = 2.2;
+    FragColor = vec4(pow(lighting.rgb, vec3(1.0/gamma)), 1.0);
 }
