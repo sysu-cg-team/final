@@ -81,12 +81,12 @@ int main(int argc, char *argv[])
 
   // load models
   // -----------
-  //Model ourModel(FileSystem::getPath("resources/desert/desert.obj"));
+  Model ourModel(FileSystem::getPath("resources/landscape/landscape.obj"));
 
   // load wood
-  ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/wood.jpg").c_str(), false, "wood");
-  auto woodShader = ResourceManager::LoadShader(FileSystem::getPath("src/final/final/wood.vs").c_str(), FileSystem::getPath("src/final/final/wood.fs").c_str(), nullptr, "wood");
-  auto wood = Wood(glm::vec3(0, 20, 0), glm::vec3(2, 0.8, 2), glm::vec3(1));
+  // ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/wood.jpg").c_str(), false, "wood");
+  // auto woodShader = ResourceManager::LoadShader(FileSystem::getPath("src/final/final/wood.vs").c_str(), FileSystem::getPath("src/final/final/wood.fs").c_str(), nullptr, "wood");
+  // auto wood = Wood(glm::vec3(0, 20, 0), glm::vec3(2, 0.8, 2), glm::vec3(1));
 
   // load skybox
   ResourceManager::LoadShader(FileSystem::getPath("src/final/final/skybox.vs").c_str(), FileSystem::getPath("src/final/final/skybox.fs").c_str(), nullptr, "skybox");
@@ -182,6 +182,7 @@ int main(int argc, char *argv[])
     lightSpaceMatrix = lightProjection * lightView;
     // render scene from light's point of view
     glm::mat4 model(1.0f);
+	glm::mat4 modelModel = glm::translate(model ,glm::vec3(0.0f, 20.0f, 0.0f));
     depthShader.use();
     depthShader.setMat4("model", model);
     depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
@@ -190,9 +191,10 @@ int main(int argc, char *argv[])
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    wood.Draw(&depthShader);
+    //wood.Draw(&depthShader);
     plane.Draw(&depthShader);
-   // ourModel.Draw(depthShader);
+	depthShader.setMat4("model", modelModel);
+	ourModel.Draw(depthShader);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -202,6 +204,7 @@ int main(int argc, char *argv[])
 
     // 2. render scene as normal using the generated depth/shadow map
     // --------------------------------------------------------------
+	/*
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     shadowShader.use();
@@ -215,9 +218,11 @@ int main(int argc, char *argv[])
     shadowShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, depthMap);
-    wood.Draw(&shadowShader);
+    wood.Draw(&shadowShader);*/
 
 	// draw plane
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 200.0f);
+	glm::mat4 view = camera.GetViewMatrix();
     auto planeShader = ResourceManager::GetShader("plane");
     planeShader.use();
     glActiveTexture(GL_TEXTURE0); // 在绑定纹理之前先激活纹理单元
@@ -262,8 +267,8 @@ int main(int argc, char *argv[])
     glBindTexture(GL_TEXTURE_2D, depthMap);
 
     // render the loaded model
-    ourShader.setMat4("model", model);
-   // ourModel.Draw(ourShader);
+    ourShader.setMat4("model", modelModel);
+	ourModel.Draw(ourShader);
 
     auto skyboxShader = ResourceManager::GetShader("skybox");
     skyboxShader.use();
