@@ -117,16 +117,16 @@ int main(int argc, char *argv[])
   planeShader.setInt("texture2", 1);
   planeShader.setInt("mask", 2);
   planeShader.setInt("shadowMap", 3);
-  ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/grass.png").c_str(), true, "grass");
+  ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/grass.jpg").c_str(), true, "grass");
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/mountain.png").c_str(), true, "mountain");
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/mask.png").c_str(), false, "mask");
-  Plane plane(glm::vec3(-125, 0, -125), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
+  Plane plane(glm::vec3(-125, 0, -125), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height.jpg").c_str());
 
   // load grass
   auto grassShader = ResourceManager::LoadShader(FileSystem::getPath("src/final/final/grass.vs").c_str(), FileSystem::getPath("src/final/final/grass.fs").c_str(), FileSystem::getPath("src/final/final/grass.gs").c_str(), "grass");
-  Grass grass(glm::vec3(-125, 0, -125), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
-  Grass grass2(glm::vec3(-125.5, 0, -125.5), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
-  Grass grass3(glm::vec3(-125.8, 0, -125.8), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
+  Grass grass(glm::vec3(-125, 0, -125), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height.jpg").c_str());
+  Grass grass2(glm::vec3(-125.5, 0, -125.5), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height.jpg").c_str());
+  Grass grass3(glm::vec3(-125.8, 0, -125.8), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height.jpg").c_str());
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/grass.png").c_str(), true, "t_grass");
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/alpha.png").c_str(), true, "a_grass");
   grassShader.use();
@@ -182,7 +182,8 @@ int main(int argc, char *argv[])
     lightSpaceMatrix = lightProjection * lightView;
     // render scene from light's point of view
     glm::mat4 model(1.0f);
-	glm::mat4 modelModel = glm::translate(model ,glm::vec3(0.0f, 20.0f, 0.0f));
+	glm::mat4 modelModel = glm::translate(model ,glm::vec3(3.0f, 0.0f, 22.0f));
+	modelModel = glm::scale(modelModel, glm::vec3(2.5, 3, 2.4));
     depthShader.use();
     depthShader.setMat4("model", model);
     depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
@@ -257,13 +258,13 @@ int main(int argc, char *argv[])
 
     // draw frog
     ourShader.use();
-    ourShader.setInt("shadowMap", 30);
+    ourShader.setInt("shadowMap", 15);
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
     ourShader.setVec3("viewPos", camera.Position);
     ourShader.setVec3("lightPos", lightPos);
     ourShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-    glActiveTexture(GL_TEXTURE30);
+    glActiveTexture(GL_TEXTURE15);
     glBindTexture(GL_TEXTURE_2D, depthMap);
 
     // render the loaded model

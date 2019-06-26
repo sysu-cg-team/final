@@ -71,14 +71,14 @@ void main()
 		color = vec3(0.5f, 0.5f, 0.5f);
 	}
     vec3 normal = normalize(fs_in.TangentNormal);
-    vec3 lightColor = vec3(0.75f);
+    vec3 lightColor = vec3(0.4f);
 
     // ambient
 	vec3 ambient;
 	if (hasAmbientTexture) {
-		ambient = color * texture(texture_ambient1, fs_in.TexCoords).rgb * lightColor;
+		ambient = color * texture(texture_ambient1, fs_in.TexCoords).rgb * 0.2;
 	} else {
-		ambient = color * lightColor;
+		ambient = color * 0.2;
 	}
      
     // diffuse
@@ -97,10 +97,16 @@ void main()
 	}
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     spec = pow(max(dot(normal, halfwayDir), 0.0), 256.0) * spec;
-    vec3 specular = spec * lightColor;    
+    vec3 specular = 0 * lightColor;    
 
     // calculate shadow
-    float shadow = ShadowCalculation(fs_in.FragPosLightSpace);                      
+    	float shadow;
+	if (lightDir.y < -2) {
+		shadow = 1;
+	} else {
+		shadow = ShadowCalculation(fs_in.FragPosLightSpace);        
+	}            
+	 shadow = min(shadow, 0.75);                    
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
     
 	float gamma = 2.2;

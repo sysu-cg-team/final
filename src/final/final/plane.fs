@@ -59,7 +59,10 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 void main()
 {
   vec3 color;
- 
+  if (Pos.y == 0) {
+  	  discard;
+  }
+  
   if(Pos.y > 20)
   {
     color = texture2D(texture1, fs_in.TexCoord).rgb;
@@ -89,13 +92,12 @@ void main()
     vec3 specular = 0 * lightColor;    
     // calculate shadow
     	float shadow;
-	if (lightDir.y < 0) {
+	if (lightDir.y < -2) {
 		shadow = 1;
 	} else {
 		shadow = ShadowCalculation(fs_in.FragPosLightSpace);        
 	}            
 	 shadow = min(shadow, 0.75);
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;    
-
 	FragColor = vec4(lighting, 1.0);
 }

@@ -52,7 +52,7 @@ public:
 			for (int k = 0; k < width - 1; k++)
 			{
 				glm::vec3 v1(k + 0, static_cast<float>(image[k + i * height]), i + 0);
-				if (v1.y < 10)
+				if (v1.y < 10 && v1.y > 0)
 					vertices.push_back(v1);
 			}
 		}
