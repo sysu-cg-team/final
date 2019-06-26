@@ -303,7 +303,7 @@ int main(int argc, char *argv[])
 	glBindVertexArray(fluid.VAO);
 
 	glUniform1f(glGetUniformLocation(fluid.dataset.program, "time"), fluid.water.time);
-	glUniform3fv(glGetUniformLocation(fluid.dataset.program, "lightPos"), 1, glm::value_ptr(-lightPos));
+	glUniform3fv(glGetUniformLocation(fluid.dataset.program, "lightPos"), 1, glm::value_ptr(lightPos));
 
 	glBindBuffer(GL_ARRAY_BUFFER, fluid.dataset.vertex_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(fluid.vertex_data), fluid.vertex_data, GL_STATIC_DRAW);
@@ -338,6 +338,7 @@ int main(int argc, char *argv[])
     glfwMakeContextCurrent(window);
     glfwSwapBuffers(window);
     glfwPollEvents();
+	fluid.water.time += 0.05;
   }
 
   // Delete all resources as loaded using the resource manager
