@@ -15,7 +15,7 @@
 #include "plane.h"
 #include "grass.h"
 #include "resource_manager.h"
-
+#include "fluid.h"
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -158,7 +158,15 @@ int main(int argc, char *argv[])
   glReadBuffer(GL_NONE);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-  glm::vec3 lightPos(5, -100.0f, -100.0f);
+  glm::vec3 lightPos(5, 100.0f, 100.0f);
+
+  // load lake
+
+  Fluid fluid(FileSystem::getPath("src/final/final/gerstner.vs"), 
+	  FileSystem::getPath("src/final/final/gerstner.fs"), 
+	  FileSystem::getPath("resources/wave/water-texture-2.tga"), 
+	  FileSystem::getPath("resources/wave/water-texture-2-normal.tga"));
+
 
   while (!glfwWindowShouldClose(window))
   {
@@ -169,8 +177,8 @@ int main(int argc, char *argv[])
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	auto time = cos(glfwGetTime() / 5);
-    lightPos = glm::vec3(5, 0, 0) + glm::vec3(0, 150 * cos(glfwGetTime() / 5), 150 * sin(glfwGetTime() / 5));
+	auto time = cos(glfwGetTime() / 10);
+    lightPos = glm::vec3(5, 0, 0) + glm::vec3(0, 150 * cos(glfwGetTime() / 10), 150 * sin(glfwGetTime() / 10));
 
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
@@ -182,8 +190,8 @@ int main(int argc, char *argv[])
     lightSpaceMatrix = lightProjection * lightView;
     // render scene from light's point of view
     glm::mat4 model(1.0f);
-	glm::mat4 modelModel = glm::translate(model ,glm::vec3(3.0f, 0.0f, 22.0f));
-	modelModel = glm::scale(modelModel, glm::vec3(2.5, 3, 2.4));
+	glm::mat4 modelModel = glm::translate(model ,glm::vec3(3.0f, -1.0f, 12.0f));
+	modelModel = glm::scale(modelModel, glm::vec3(3, 3, 3));
     depthShader.use();
     depthShader.setMat4("model", model);
     depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
@@ -271,6 +279,54 @@ int main(int argc, char *argv[])
     ourShader.setMat4("model", modelModel);
 	ourModel.Draw(ourShader);
 
+
+	// render lake
+
+	glm::mat4 Projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 200.0f);
+	glm::mat4 ModelViewMat = camera.GetViewMatrix();
+	glm::mat4 modelMat = glm::mat4(1.0f);
+	modelMat = glm::translate(modelMat, glm::vec3(-2, 0, 24));
+	modelMat = glm::scale(modelMat, glm::vec3(3, 1, 3));
+	modelMat = glm::rotate(modelMat, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::mat3 NormalMat = glm::transpose(glm::inverse(glm::mat3(ModelViewMat)));
+	glUseProgram(fluid.dataset.program);
+	glUniformMatrix4fv(glGetUniformLocation(fluid.dataset.program, "modelViewMat"), 1, GL_FALSE, glm::value_ptr(ModelViewMat));
+	glUniformMatrix4fv(glGetUniformLocation(fluid.dataset.program, "perspProjMat"), 1, GL_FALSE, glm::value_ptr(Projection));
+	glUniformMatrix3fv(glGetUniformLocation(fluid.dataset.program, "normalMat"), 1, GL_FALSE, glm::value_ptr(NormalMat));
+	glUniformMatrix4fv(glGetUniformLocation(fluid.dataset.program, "modelMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
+	//glUniform4fv(glGetUniformLocation(fluid.dataset.program, "modelViewMat"), 1, glm::value_ptr(ModelViewMat));
+	//glUniform4fv(glGetUniformLocation(fluid.dataset.program, "perspProjMat"), 1, glm::value_ptr(Projection));
+	//glUniform3fv(glGetUniformLocation(fluid.dataset.program, "normalMat"), 1, glm::value_ptr(NormalMat));
+	//glUniform3fv(glGetUniformLocation(fluid.dataset.program, "modelMat"), 1, glm::value_ptr(modelMat));
+
+	fluid.calculateWave();
+	glBindVertexArray(fluid.VAO);
+
+	glUniform1f(glGetUniformLocation(fluid.dataset.program, "time"), fluid.water.time);
+	glUniform3fv(glGetUniformLocation(fluid.dataset.program, "lightPos"), 1, glm::value_ptr(-lightPos));
+
+	glBindBuffer(GL_ARRAY_BUFFER, fluid.dataset.vertex_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(fluid.vertex_data), fluid.vertex_data, GL_STATIC_DRAW);
+	glVertexAttribPointer(fluid.dataset.attributes.position, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, (void*)0);
+	glEnableVertexAttribArray(fluid.dataset.attributes.position);
+
+	glBindBuffer(GL_ARRAY_BUFFER, fluid.dataset.normal_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(fluid.normal_data), fluid.normal_data, GL_STATIC_DRAW);
+	glVertexAttribPointer(fluid.dataset.attributes.normal, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, (void*)0);
+	glEnableVertexAttribArray(fluid.dataset.attributes.normal);
+
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, fluid.dataset.diffuse_texture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, fluid.dataset.normal_texture);
+	for (int c = 0; c < (STRIP_COUNT - 1); c++) {
+		glDrawArrays(GL_TRIANGLE_STRIP, STRIP_LENGTH * 2 * c, STRIP_LENGTH * 2);
+	}
+
+
+	// render skybox
     auto skyboxShader = ResourceManager::GetShader("skybox");
     skyboxShader.use();
     view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix

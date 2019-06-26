@@ -72,7 +72,7 @@ void main()
     vec3 specular = 0 * lightColor;    
     // calculate shadow
     float shadow;
-	if (lightDir.y < -2) {
+	if (lightDir.y < 0) {
 		shadow = 1;
 	} else {
 		shadow = ShadowCalculation(fs_in.FragPosLightSpace);        
