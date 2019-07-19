@@ -8,7 +8,7 @@
 
 ​	请尝试运行github仓库中的bin/release.exe来查看效果。
 
-​	![demo](D:\code\cg\assets\demo.gif)
+​	![demo](https://github.com/sysu-cg-team/final/blob/master/doc/assets/demo.gif)
 
 ## 开发环境
 
@@ -50,7 +50,7 @@
 
   Gerstner的函数表达式如下：
 
-  ![1563551795181](D:/code/cg/dmk/assets/1563551795181.png)
+  ![1563551795181](https://github.com/sysu-cg-team/final/blob/master/doc/assets/1563551795181.png)
 
   
 
@@ -64,15 +64,15 @@
 
   因此，我们可以构造如下结构体，方便后面使用：
 
-  ![1563552547989](D:/code/cg/dmk/assets/1563552547989.png)
+  ![1563552547989](https://github.com/sysu-cg-team/final/blob/master/doc/assets/1563552547989.png)
 
   然后根据Gerstner波函数进行计算：
 
-  ![1563552598263](D:/code/cg/dmk/assets/1563552598263.png)
+  ![1563552598263](https://github.com/sysu-cg-team/final/blob/master/doc/assets/1563552598263.png)
 
   光照模型采用的是ward各向异光性模型，Ward各向异性光照模型在一定程度上也是依赖于微表面理论作为依据，但并不严格，不过其最终还是获得了不错的效果；同时该模型也满足能量守恒和互反性。
 
-  ![1563552648238](D:/code/cg/dmk/assets/1563552648238.png)
+  ![1563552648238](https://github.com/sysu-cg-team/final/blob/master/doc/assets/1563552648238.png)
 
   Ward模型可以对大多数的材质类型获得较好的模拟，不过其在specular反射部分中并没有使用fresnel分量，因而在该部分的表现力上可能有所欠缺。因此，我添加了fresnel分量，因为这个分量对于水、金属等物体有非常好的效果，更逼近真实。Schlick Fresnel对于Fresnel来说是一个非常不错的例子。从GPU精粹第3章可以得到。
 
@@ -82,11 +82,11 @@
 
   我们会用一张图片来存储切空间法向量信息, 这叫法线贴图。法线贴图整体是偏蓝的, 因为它代表了切空间中原始法向量的方向, 而R和G可以表达法向量角度的偏移。法线贴图不能直接用于物体的着色器, 因为它的法向量是切空间的法向量, 不是物体空间的法向量。为了使法线贴图能够应用于我们的物体, 我们需要将物体空间的各种向量变换到切空间来进行计算(也可以从切空间变换到物体空间, 但计算会更复杂), 这个变换需要物体空间中顶点的法向量和TBN矩阵。
 
-  ![1563553211196](D:\code\cg\assets\tex_Barrel_normal.tga.png)
+  ![1563553211196](https://github.com/sysu-cg-team/final/blob/master/doc/assets/tex_Barrel_normal.tga.png)
 
 - **Gamma校正:**gamma校正用的是一条公式V_out=V_in^(1/λ), 实质上它的作用为把RGB三个通道的灰度值拉高, 这样颜色就整体变亮了。
 
-  ![gamma](D:\code\cg\assets\gamma.png)
+  ![gamma](https://github.com/sysu-cg-team/final/blob/master/doc/assets/gamma.png)
 
 - **草地显示:** 我们在屋子的周围模拟生成了草地,草地会随着风向摇摆,实现原理如下.
 
@@ -98,23 +98,23 @@
 
   - 模拟风.通过全局和局部随机值生成风(vec3).根据草越靠近顶部受风影响越大的原理产生草不同部分的位移.
 
-    ![grass](D:\code\cg\assets\grass.gif)
+    ![grass](https://github.com/sysu-cg-team/final/blob/master/doc/assets/grass.gif)
 
 - **抗锯齿:** 我们使用MSAA的机制来实现抗锯齿操作, 一般情况下, 我们在光栅化的时候, 考虑该该像素的中心点是否在图元的内部, 图元内部则对对该像素着色. 但是这样在图元的边缘就形成锯齿现象.
 
-  ![msaa1](D:\code\cg\assets\msaa2.png)
+  ![msaa1](https://github.com/sysu-cg-team/final/blob/master/doc/assets/msaa2.png)
 
   ​	我们使用多重采样技术也就是MSAA机制来解决这个问题,我们不再是单纯使用中心点一个点来判断一个像素的颜色, 而是使用多重采用, 一个像素中存在多个采样点, 根据包含在图元内的采样点的个数觉得该像素的颜色, 从而解决锯齿化的问题.
 
-  ​				![msaa3](D:\code\cg\assets\msaa3.png)
+  ​				![msaa3](https://github.com/sysu-cg-team/final/blob/master/doc/assets/msaa3.png)
 
   我们将抗锯齿效果应用到草地上,可以得到如下对比.
 
-  ![mass4](D:\code\cg\assets\mass4.png)
+  ![mass4](https://github.com/sysu-cg-team/final/blob/master/doc/assets/msaa4.png)
 
 - **文字显示:** 文字显示我们使用freetype库辅助我们. 我们使用将系统的字体文件使用freetype加载后, 根据free type的定义, 设置好每个需要显示的字符的属性值(width height bearingX bearingY advance等), 之后将其作为纹理渲染到一个二维的平面上, 实现文字显示的效果. 我们使用文字渲染来显示岛上时间.
 
-  ![type](D:\code\cg\assets\type.png)
+  ![type](https://github.com/sysu-cg-team/final/blob/master/doc/assets/type.png)
 
 ## 遇到的问题和解决方案
 
