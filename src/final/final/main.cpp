@@ -296,8 +296,8 @@ int main(int argc, char *argv[])
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	auto time = cos(glfwGetTime() / 10);
-    lightPos = glm::vec3(5, 0, 0) + glm::vec3(0, 100 * cos(glfwGetTime() / 10), 100 * sin(glfwGetTime() / 10));
-
+    //lightPos = glm::vec3(5, 0, 0) + glm::vec3(0, 100 * cos(glfwGetTime() / 10), 100 * sin(glfwGetTime() / 10));
+	lightPos = glm::vec3(5, 0, 0) + glm::vec3(0, 100 * cos(glfwGetTime() / 10), 100 * sin(glfwGetTime() / 10));
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
     glm::mat4 lightProjection, lightView;
@@ -465,7 +465,7 @@ int main(int argc, char *argv[])
 	}
 
 	//文字显示----
-	string texttime = to_string(int(currentFrame / 5 / 3.1416 / 2 * 24 + 12) % 24);
+	string texttime = to_string(int(currentFrame / 10 / 3.1416 / 2 * 24 + 12) % 24);
 	string mytext = "time: " + texttime + ":00";
 	RenderText(textshader, mytext, 570.0f, 570.0f, 0.5f, glm::vec3(1.0f, 0.7f, 0.3f));
 
