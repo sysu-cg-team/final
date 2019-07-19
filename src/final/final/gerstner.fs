@@ -19,7 +19,7 @@ void main()
   vec4 diffuse, ambient, globalAmt;
   vec4 specular;
   vec3 eyeDir, lightDir, normalDir, halfWayDir, reflectDir;
-  float NdotL, NdotH, NdotR, S, temp, delta;
+  float NdotL, NdotH, NdotR, S, temp, delta, fresnel;
   float alpha = 0.4;
   
   eyeDir = normalize(eyeVect);
@@ -28,6 +28,7 @@ void main()
   normalDir = normalize(normalVect);
   halfWayDir = normalize(halfWayVect);
   reflectDir = normalize(reflectVect);
+  
   
   NdotL = max(dot(normalDir, lightDir), 0.0);
   NdotH = max(dot(normalDir, halfWayDir), 0.0);
@@ -41,6 +42,8 @@ void main()
   globalAmt = envirAmbient * materAmbient;
   ambient = envirAmbient * lightAmbient;
   specular = materSpecular * lightSpecular;
+  fresnel = 0.4 + 0.6 * pow(1.0 - dot(eyeDir, normalDir), 6.0);
+  specular *= fresnel;
   
   gl_FragColor = NdotL * (diffuse + specular * S) + globalAmt;
 }

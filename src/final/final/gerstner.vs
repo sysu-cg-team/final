@@ -1,5 +1,6 @@
 #version 330
 
+layout (location = 0) in vec3 aPos;
 attribute vec3 position;
 attribute vec3 normal;
 
@@ -9,10 +10,10 @@ uniform mat3 normalMat;
 uniform mat4 modelMat;
 
 uniform float time;
-uniform vec3 lightPos;
+//uniform vec3 lightPos;
+//uniform vec3 eyePos;
 
 varying vec2 texture_coord;
-
 varying vec3 normalVect;
 varying vec3 lightVect;
 varying vec3 eyeVect;
@@ -27,8 +28,8 @@ void main()
   float tex_y = 0.5 - (position.y + time/25.0) / 5.0;
   texture_coord = vec2(tex_x, tex_y);
 
-  vec3 eyePos = vec3(0.0, 0.0, 28.0);
-  //vec3 lightPos = vec3(0.0, 1.0, 50.0);
+  vec3 eyePos = vec3(0.0, 5.0, 0.0);
+  vec3 lightPos = vec3(0.0, 10.0, 0.0);
   vec3 ptVertex = vec3(modelViewMat * vec4(position, 1.0));
 
   eyeVect = normalize(eyePos - ptVertex);
