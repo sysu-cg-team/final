@@ -17,6 +17,7 @@
 #include "resource_manager.h"
 #include "fluid.h"
 #include <iostream>
+#include <direct.h>
 
 // FreeType
 #include <ft2build.h>
@@ -33,7 +34,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(glm::vec3(20.0f, 10.0f, 20.0f));
+Camera camera(glm::vec3(0.0f, 10.0f, 100.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -59,6 +60,8 @@ void RenderText(Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat 
 
 int main(int argc, char *argv[])
 {
+	
+
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -185,8 +188,8 @@ int main(int argc, char *argv[])
 
   // load models
   // -----------
-  Model ourModel(FileSystem::getPath("resources/landscape/mill.obj"));
-  cout << FileSystem::getPath("") << endl;
+  //Model ourModel(FileSystem::getPath("resources/textures/landscape/mill.obj"));
+  Model ourModel(FileSystem::getPath("resources/textures/landscape/mill_without_water.obj"));
 
   // load wood
   // ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/wood.jpg").c_str(), false, "wood");
@@ -474,7 +477,6 @@ int main(int argc, char *argv[])
 
   // Delete all resources as loaded using the resource manager
   ResourceManager::Clear();
-
   glfwTerminate();
   return 0;
 }
