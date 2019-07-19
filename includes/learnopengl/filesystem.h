@@ -39,24 +39,26 @@ private:
 
   static std::string getPathRelativeRoot(const std::string& path)
   {
-	  char exeFullPath[260];
+	  /*char exeFullPath[260];
 	  memset(exeFullPath, 0, 260);
 	  GetModuleFileName(NULL, exeFullPath, MAX_PATH);
 	  std::string str(exeFullPath);
 	  std::string pathstr;
 	  pathstr = str.substr(0, str.find_last_of('\\'));
-	  return pathstr + "\\" + path;
+	  return pathstr + "\\" + path;*/
+	  return getRoot() + std::string("/") + path;
   }
 
   static std::string getPathRelativeBinary(const std::string& path)
   {
-	  char exeFullPath[260];
+	 /* char exeFullPath[260];
 	  memset(exeFullPath, 0, 260);
 	  GetModuleFileName(NULL, exeFullPath, MAX_PATH);
   std::string str(exeFullPath);
 	  std::string pathstr;
 	  pathstr = str.substr(0, str.find_last_of('\\'));
-    return pathstr + "\\" + path;
+    return pathstr + "\\" + path;*/
+	  return "../../../" + path;
   }
 
 
