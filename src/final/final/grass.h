@@ -13,12 +13,18 @@
 class Grass : public Object
 {
 public:
-	Grass(glm::vec3 pos, glm::vec3 size, glm::vec3 color, const char *file) : Object(pos, size, color)
+	Grass(glm::vec3 pos, glm::vec3 size, glm::vec3 color, int num_row, int num_col, float interval) : Object(pos, size, color)
 	{
-		this->InitRenderData(file);
+		this->interval = interval;
+		this->num_col = num_col;
+		this->num_row = num_row;
+		this->InitRenderData();
 	};
 	~Grass() {};
 
+	float interval;
+	int num_row;
+	int num_col;
 	unsigned int VAO;
 	int size;
 
@@ -40,26 +46,29 @@ public:
 		glBindVertexArray(0);
 	}
 
-	void InitRenderData(const char *file)
+	void InitRenderData()
 	{
 		int width, height;
-		unsigned char *image = stbi_load(file, &width, &height, 0, STBI_grey);
+		//unsigned char *image = stbi_load(file, &width, &height, 0, STBI_grey);
 		// Now generate texture
 		std::vector<glm::vec3> vertices;
-
-		for (int i = 0; i < height - 1; i++)
+		
+		for (int i = 0; i < num_row; i++)
 		{
-			for (int k = 0; k < width - 1; k++)
+			for (int j = 0; j < num_col; j++)
 			{
-				glm::vec3 v1(k + 0, static_cast<float>(image[k + i * height]), i + 0);
-				if (v1.y < 10 && v1.y > 0)
-					vertices.push_back(v1);
+				//glm::vec3 v1(k + 0, static_cast<float>(image[k + i * height]), i + 0);
+				/*if (v1.y < 10 && v1.y > 0)
+					vertices.push_back(v1);*/
+				glm::vec3 v1(j * interval, 0, i * interval);
+				vertices.push_back(v1);
 			}
 		}
+		
 
 		this->size = vertices.size();
 
-		stbi_image_free(image);
+		//stbi_image_free(image);
 
 		unsigned int VBO;
 		glGenVertexArrays(1, &this->VAO);

@@ -84,5 +84,6 @@ void main()
    if (_alpha < 0.8) {
    	   discard;
    }
-   FragColor = vec4(lighting, 1);
+   float gamma = 2.2;
+    FragColor = vec4(pow(lighting.rgb, vec3(1.0/gamma)), 1.0);
 }

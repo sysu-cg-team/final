@@ -97,16 +97,17 @@ void main()
 	}
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     spec = pow(max(dot(normal, halfwayDir), 0.0), 256.0) * spec;
-    vec3 specular = 0 * lightColor;    
+    vec3 specular = spec * lightColor;    
 
     // calculate shadow
-    	float shadow;
-	if (lightDir.y < -2) {
+    float shadow;
+	if (lightPos.y < 0) {
 		shadow = 1;
 	} else {
-		shadow = ShadowCalculation(fs_in.FragPosLightSpace);        
-	}            
-	 shadow = min(shadow, 0.75);                    
+		shadow = ShadowCalculation(fs_in.FragPosLightSpace);  
+	}
+	
+	shadow = min(shadow, 0.75);                    
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
     
 	float gamma = 2.2;

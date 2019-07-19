@@ -29,7 +29,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(20.0f, 10.0f, 20.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 
   // load models
   // -----------
-  Model ourModel(FileSystem::getPath("resources/landscape/landscape.obj"));
+  Model ourModel(FileSystem::getPath("resources/landscape/mill.obj"));
 
   // load wood
   // ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/wood.jpg").c_str(), false, "wood");
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 
   Skybox skybox(glm::vec3(1), glm::vec3(1), glm::vec3(1), faces, faces2, "skybox_s", "skybox_n");
 
-
+  /*
   // load plane
   auto planeShader = ResourceManager::LoadShader(FileSystem::getPath("src/final/final/plane.vs").c_str(), FileSystem::getPath("src/final/final/plane.fs").c_str(), nullptr, "plane");
   planeShader.use();
@@ -117,16 +117,26 @@ int main(int argc, char *argv[])
   planeShader.setInt("texture2", 1);
   planeShader.setInt("mask", 2);
   planeShader.setInt("shadowMap", 3);
-  ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/grass.jpg").c_str(), true, "grass");
+  ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/grass_2.jpg").c_str(), true, "grass");
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/mountain.png").c_str(), true, "mountain");
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/plane/mask.png").c_str(), false, "mask");
-  Plane plane(glm::vec3(-125, 0, -125), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height.jpg").c_str());
-
+  Plane plane(glm::vec3(-125, 0, -125), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height_2.jpg").c_str());
+  */
+  
   // load grass
+  
   auto grassShader = ResourceManager::LoadShader(FileSystem::getPath("src/final/final/grass.vs").c_str(), FileSystem::getPath("src/final/final/grass.fs").c_str(), FileSystem::getPath("src/final/final/grass.gs").c_str(), "grass");
-  Grass grass(glm::vec3(-125, 0, -125), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height.jpg").c_str());
-  Grass grass2(glm::vec3(-125.5, 0, -125.5), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height.jpg").c_str());
-  Grass grass3(glm::vec3(-125.8, 0, -125.8), glm::vec3(1, 0.3, 1), glm::vec3(1), FileSystem::getPath("resources/textures/plane/height.jpg").c_str());
+  glm::vec3 grassPos(-40.0f, -6.0f, 30.0f);
+  glm::vec3 grassScale(2, 0.6, 2);
+  Grass grass(grassPos, grassScale, glm::vec3(1), 25, 5, 0.5);
+  glm::vec3 grassPos2(-25.0f, -6.0f, 30.0f);
+  Grass grass2(grassPos2, grassScale, glm::vec3(1), 7, 11, 0.4);
+  glm::vec3 grassPos3(30.0f, -4.0f, 35.0f);
+  Grass grass3(grassPos3, grassScale, glm::vec3(1), 11, 11, 0.4);
+  glm::vec3 grassPos4(-35.0f, -6.0f, 45.0f);
+  Grass grass4(grassPos4, grassScale, glm::vec3(1), 7, 7, 0.6);
+  glm::vec3 grassPos5(-38.0f, -6.0f, 45.0f);
+  Grass grass5(grassPos5, grassScale, glm::vec3(1), 7, 7, 0.6);
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/grass.png").c_str(), true, "t_grass");
   ResourceManager::LoadTexture(FileSystem::getPath("resources/textures/alpha.png").c_str(), true, "a_grass");
   grassShader.use();
@@ -137,7 +147,7 @@ int main(int argc, char *argv[])
   auto shadowShader = ResourceManager::LoadShader(FileSystem::getPath("src/final/final/shadow_mapping.vs").c_str(), FileSystem::getPath("src/final/final/shadow_mapping.fs").c_str(), nullptr, "shadow_mapping");
   auto depthShader = ResourceManager::LoadShader(FileSystem::getPath("src/final/final/shadow_mapping_depth.vs").c_str(), FileSystem::getPath("src/final/final/shadow_mapping_depth.fs").c_str(), nullptr, "shadow_mapping_depth");
 
-  const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+  const unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
   unsigned int depthMapFBO;
   glGenFramebuffers(1, &depthMapFBO);
   // create depth texture
@@ -159,14 +169,14 @@ int main(int argc, char *argv[])
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   glm::vec3 lightPos(5, 100.0f, 100.0f);
-
+  /*
   // load lake
 
   Fluid fluid(FileSystem::getPath("src/final/final/gerstner.vs"), 
 	  FileSystem::getPath("src/final/final/gerstner.fs"), 
 	  FileSystem::getPath("resources/wave/water-texture-2.tga"), 
 	  FileSystem::getPath("resources/wave/water-texture-2-normal.tga"));
-
+*/
 
   while (!glfwWindowShouldClose(window))
   {
@@ -178,7 +188,7 @@ int main(int argc, char *argv[])
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	auto time = cos(glfwGetTime() / 10);
-    lightPos = glm::vec3(5, 0, 0) + glm::vec3(0, 150 * cos(glfwGetTime() / 10), 150 * sin(glfwGetTime() / 10));
+    lightPos = glm::vec3(5, 0, 0) + glm::vec3(0, 100 * cos(glfwGetTime() / 10), 100 * sin(glfwGetTime() / 10));
 
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
@@ -191,7 +201,7 @@ int main(int argc, char *argv[])
     // render scene from light's point of view
     glm::mat4 model(1.0f);
 	glm::mat4 modelModel = glm::translate(model ,glm::vec3(3.0f, -1.0f, 12.0f));
-	modelModel = glm::scale(modelModel, glm::vec3(3, 3, 3));
+	modelModel = glm::scale(modelModel, glm::vec3(50, 50, 50));
     depthShader.use();
     depthShader.setMat4("model", model);
     depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
@@ -201,7 +211,7 @@ int main(int argc, char *argv[])
     glClear(GL_DEPTH_BUFFER_BIT);
 
     //wood.Draw(&depthShader);
-    plane.Draw(&depthShader);
+    //plane.Draw(&depthShader);
 	depthShader.setMat4("model", modelModel);
 	ourModel.Draw(depthShader);
 
@@ -229,9 +239,13 @@ int main(int argc, char *argv[])
     glBindTexture(GL_TEXTURE_2D, depthMap);
     wood.Draw(&shadowShader);*/
 
-	// draw plane
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 200.0f);
 	glm::mat4 view = camera.GetViewMatrix();
+	/*
+
+
+	// draw plane
+	
     auto planeShader = ResourceManager::GetShader("plane");
     planeShader.use();
     glActiveTexture(GL_TEXTURE0); // 在绑定纹理之前先激活纹理单元
@@ -248,9 +262,10 @@ int main(int argc, char *argv[])
     planeShader.setVec3("lightPos", lightPos);
     planeShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
     plane.Draw(&planeShader);
-
+	*/
+	
     // draw grass
-
+	
     grassShader.use();
     grassShader.setMat4("projection", projection);
     grassShader.setMat4("view", view);
@@ -263,7 +278,9 @@ int main(int argc, char *argv[])
     grass.Draw(&grassShader);
     grass2.Draw(&grassShader);
     grass3.Draw(&grassShader);
-
+    grass4.Draw(&grassShader);
+    grass5.Draw(&grassShader);
+	
     // draw frog
     ourShader.use();
     ourShader.setInt("shadowMap", 15);
@@ -279,7 +296,7 @@ int main(int argc, char *argv[])
     ourShader.setMat4("model", modelModel);
 	ourModel.Draw(ourShader);
 
-
+	/*
 	// render lake
 
 	glm::mat4 Projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 200.0f);
@@ -298,7 +315,7 @@ int main(int argc, char *argv[])
 	//glUniform4fv(glGetUniformLocation(fluid.dataset.program, "perspProjMat"), 1, glm::value_ptr(Projection));
 	//glUniform3fv(glGetUniformLocation(fluid.dataset.program, "normalMat"), 1, glm::value_ptr(NormalMat));
 	//glUniform3fv(glGetUniformLocation(fluid.dataset.program, "modelMat"), 1, glm::value_ptr(modelMat));
-
+	
 	fluid.calculateWave();
 	glBindVertexArray(fluid.VAO);
 
@@ -324,7 +341,7 @@ int main(int argc, char *argv[])
 	for (int c = 0; c < (STRIP_COUNT - 1); c++) {
 		glDrawArrays(GL_TRIANGLE_STRIP, STRIP_LENGTH * 2 * c, STRIP_LENGTH * 2);
 	}
-
+	*/
 
 	// render skybox
     auto skyboxShader = ResourceManager::GetShader("skybox");
@@ -338,7 +355,7 @@ int main(int argc, char *argv[])
     glfwMakeContextCurrent(window);
     glfwSwapBuffers(window);
     glfwPollEvents();
-	fluid.water.time += 0.05;
+	//fluid.water.time += 0.05;
   }
 
   // Delete all resources as loaded using the resource manager
